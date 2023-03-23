@@ -100,7 +100,8 @@ boostme <- function(bs,
                     seed = 1,
                     save = NULL,
                     verbose = TRUE,
-                   n_autosomes=22) {
+                   n_autosomes=22,
+                   n_sample_cores=20) {
   # checks
   stopifnot(class(bs) == "BSseq")
   if (trainSize + validateSize + testSize > nrow(bs)) {
@@ -144,7 +145,19 @@ boostme <- function(bs,
                   "Extracting positions from bs object (takes a bit)"))
   }
   rownames(imputed) <- as.character(granges(bs))
-  for (i in 1:nrow(pData(bs))) { # Train a model for each sample
+
+
+## parallelize
+library(doParallel)
+
+## number of cores
+cluster <- makeCluster(n_sample_cores) 
+
+registerDoParallel(cluster)
+
+library(foreach)
+  
+  foreach(i=1:nrow(pData(bs))) %dopar% { # Train a model for each sample
     # TODO: add in parallel option for this instead of loop (?)
     if (verbose) {
       message(paste(Sys.time(), sampleNames(bs)[i]))
