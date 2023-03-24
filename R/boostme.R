@@ -119,8 +119,8 @@ boostme <- function(bs,
     }
   }
 
-  metrics <- data.frame(matrix(nrow = ncol(bs), ncol = 9))
-  colnames(metrics) <- c("sample",
+ # metrics <- data.frame(matrix(nrow = ncol(bs), ncol = 9))
+#  colnames(metrics) <- c("sample",
                          "rmse_val", "auroc_val", "auprc_val", "acc_val",
                          "rmse_test", "auroc_test", "auprc_test", "acc_test")
 
@@ -253,10 +253,13 @@ i=sample_index
       message(paste(Sys.time(), "...... Testing Accuracy:",
                     round(testMetrics$acc, digits = 4)))
     }
-    metrics[i, 1] <- sampleNames(bs)[i]
-    metrics[i, 2:ncol(metrics)] <-
+    metrics <- c(sampleNames(bs)[i],
       c(valMetrics$rmse, valMetrics$auroc, valMetrics$auprc, valMetrics$acc,
-        testMetrics$rmse, testMetrics$auroc, testMetrics$auprc, testMetrics$acc)
+        testMetrics$rmse, testMetrics$auroc, testMetrics$auprc, testMetrics$acc) )
+  
+    names(metrics) <- c("sample",
+                         "rmse_val", "auroc_val", "auprc_val", "acc_val",
+                         "rmse_test", "auroc_test", "auprc_test", "acc_test")
 
     if (impute) {
       yCov <- as.vector(getCoverage(bs[, i]))
@@ -307,7 +310,7 @@ i=sample_index
     }
 
   if (!is.null(save)) {
-    write.table(metrics, file = save, quote = F, sep = "\t", row.names = F)
+    write.table(metrics, file = paste0(save,"_",sprintf("%004d",i)), quote = F, sep = "\t", row.names = F)
     if (verbose) {
       message(paste(Sys.time(), "... Saved results to", save))
     }
