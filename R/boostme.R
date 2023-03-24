@@ -121,8 +121,8 @@ boostme <- function(bs,
 
  # metrics <- data.frame(matrix(nrow = ncol(bs), ncol = 9))
 #  colnames(metrics) <- c("sample",
-                         "rmse_val", "auroc_val", "auprc_val", "acc_val",
-                         "rmse_test", "auroc_test", "auprc_test", "acc_test")
+#                         "rmse_val", "auroc_val", "auprc_val", "acc_val",
+#                         "rmse_test", "auroc_test", "auprc_test", "acc_test")
 
   # only use the autosome
   if (grepl('chr', trainChr)) { # if using chr in the names
