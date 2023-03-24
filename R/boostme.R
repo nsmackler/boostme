@@ -310,7 +310,7 @@ i=sample_index
     }
 
   if (!is.null(save)) {
-    write.table(metrics, file = paste0(save,"_",sprintf("%004d",i)), quote = F, sep = "\t", row.names = F)
+    write.table(metrics, file = paste0(save,"_",sprintf("%004d",i),".txt"), quote = F, sep = "\t", row.names = F)
     if (verbose) {
       message(paste(Sys.time(), "... Saved results to", save))
     }
