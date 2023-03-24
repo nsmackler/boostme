@@ -100,17 +100,17 @@ boostme <- function(bs,
                     seed = 1,
                     save = NULL,
                     verbose = TRUE,
-                   n_autosomes=22,
-                   n_sample_cores=20) {
+                    n_autosomes=22,
+                    sample_index=1) {
   # checks
   stopifnot(class(bs) == "BSseq")
-  if (trainSize + validateSize + testSize > nrow(bs)) {
-    stop('trainSize + validateSize + testSize must be <= num of CpGs in bsseq')
-  }
-  stopifnot(trainSize + validateSize + testSize <= nrow(bs))
-  if (nrow(pData(bs)) < 3 & sampleAvg == TRUE) {
-    stop("At least 3 samples are needed to use the sample average feature")
-  }
+  #if (trainSize + validateSize + testSize > nrow(bs)) {
+  #  stop('trainSize + validateSize + testSize must be <= num of CpGs in bsseq')
+  #}
+  #stopifnot(trainSize + validateSize + testSize <= nrow(bs))
+  #if (nrow(pData(bs)) < 3 & sampleAvg == TRUE) {
+  #  stop("At least 3 samples are needed to use the sample average feature")
+  #}
   if (is.null(save)) {
     if (verbose) {
       message(paste("Warning: Performance metrics will be reported but not",
@@ -130,35 +130,24 @@ boostme <- function(bs,
   } else { # else don't use chr in the names
     bs <- chrSelectBSseq(bs, seqnames = seq(1,n_autosomes,1))
   }
-  if (mask) {
-    message(paste(Sys.time(),
-                  "Masking unimputed values in resulting matrix"))
-    imputed <- matrix(NA, nrow = nrow(bs), ncol = ncol(bs))
-  } else {
-    imputed <- getMeth(bs, type = "raw")
-  }
-  if (typeof(imputed)=='S4') {
-    imputed <- as.data.frame(realize(imputed)@seed)
-  }
-  if (verbose) {
-    message(paste(Sys.time(),
-                  "Extracting positions from bs object (takes a bit)"))
-  }
-  rownames(imputed) <- as.character(granges(bs))
+#  if (mask) {
+#    message(paste(Sys.time(),
+#                  "Masking unimputed values in resulting matrix"))
+#    imputed <- matrix(NA, nrow = nrow(bs), ncol = ncol(bs))
+#  } else {
+#    imputed <- getMeth(bs, type = "raw")
+#  }
+#  if (typeof(imputed)=='S4') {
+#    imputed <- as.data.frame(realize(imputed)@seed)
+#  }
+#  if (verbose) {
+#    message(paste(Sys.time(),
+#                  "Extracting positions from bs object (takes a bit)"))
+#  }
+#  rownames(imputed) <- as.character(granges(bs))
 
-
-## parallelize
-library(doParallel)
-
-## number of cores
-cluster <- makeCluster(n_sample_cores) 
-
-registerDoParallel(cluster)
-
-library(foreach)
-  
-  foreach(i=1:nrow(pData(bs))) %dopar% { # Train a model for each sample
-    # TODO: add in parallel option for this instead of loop (?)
+# Train a model for each sample
+i=sample_index
     if (verbose) {
       message(paste(Sys.time(), sampleNames(bs)[i]))
       message(paste(Sys.time(), "... Building features"))
@@ -314,9 +303,9 @@ library(foreach)
       if (mask) {
         newY[-enoughInfoToImpute] <- NA
       }
-      imputed[, i] <- newY
+      imputed <- newY
     }
-  }
+
   if (!is.null(save)) {
     write.table(metrics, file = save, quote = F, sep = "\t", row.names = F)
     if (verbose) {
