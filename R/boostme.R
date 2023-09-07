@@ -310,7 +310,7 @@ i=sample_index
     }
 
   if (!is.null(save)) {
-    write.table(metrics, file = paste0(save,"_",sprintf("%004d",i),".txt"), quote = F, sep = "\t", row.names = F)
+            write.table(metrics, file = paste0(colnames(dap_filtered_p1)[sample_index], ".txt"), quote = F, sep = "\t", row.names = F, col.names = F)
     if (verbose) {
       message(paste(Sys.time(), "... Saved results to", save))
     }
