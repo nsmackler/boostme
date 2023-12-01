@@ -309,8 +309,8 @@ i=sample_index
       imputed <- newY
     }
     
-     write.table(metrics, file = paste0(colnames(dap_filtered_p1)[sample_index], "metrics.txt"), quote = F, sep = "\t", row.names = F, col.names = F)
-     write(imputed, file = paste0(colnames(dap_filtered_p1)[sample_index], "imputed.txt"), ncolumns=1)
+     write.table(metrics, file = paste0(colnames(bs)[sample_index], "metrics.txt"), quote = F, sep = "\t", row.names = F, col.names = F)
+     write(imputed, file = paste0(colnames(bs)[sample_index], "imputed.txt"), ncolumns=1)
   if (verbose) {
       message(paste(Sys.time(), "... Saved results to", save))
     }
